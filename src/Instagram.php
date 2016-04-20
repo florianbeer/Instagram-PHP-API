@@ -550,11 +550,14 @@ class Instagram
             $function = str_replace(self::API_URL, '', $apiCall[0]);
             $count = ($limit) ? $limit : count($obj->data);
 
+            $params = array('count' => $count);
             if (isset($obj->pagination->next_max_tag_id)) {
-                return $this->_makeCall($function, array('max_tag_id' => $obj->pagination->next_max_tag_id, 'count' => $count));
+                $params['max_tag_id'] = $obj->pagination->next_max_tag_id;
             }
-
-            return $this->_makeCall($function, array('next_max_id' => $obj->pagination->next_max_id, 'count' => $count));
+            if (isset($obj->pagination->next_max_id)) {
+                $params['next_max_id'] = $obj->pagination->next_max_id;
+            }
+            return $this->_makeCall($function, $params);
         }
         throw new InstagramException("Error: pagination() | This method doesn't support pagination.");
     }
